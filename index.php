@@ -47,7 +47,63 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Event Booking System</title>
     <?php include 'styles.php'; ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.querySelector('.login-form');
 
+            loginForm.addEventListener('submit', function(event) {
+                let emain = document.querySelector('input[name="email"]').value.trim();
+                let password = document.querySelector('input[name="password"]').value.trim();
+                let errors = [];
+
+                // Clear previous error messages
+                clearError();
+
+                // Validate email and password
+                if (email === '') {
+                    errors.push('Email is required');
+                    showError('Email is required');
+                }
+
+                if (password === '') {
+                    errors.push('Password is required');
+                    showError('Password is required');
+                }
+
+                // Check if email or password are empty
+                if (email === "" || password === "") {
+                    errors.push("All fields are required!");
+                    showError('All fields are required');
+                }
+
+                // Additional validation for email format
+                if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                    errors.push("Please enter a valid email address.");
+                    showError("Please enter a valid email address.");
+                }
+
+                // If there are errors, prevent form submission
+                if (errors.length > 0) {
+                    event.preventDefault();
+                }
+            });
+
+            function showError(message) {
+                const errorMessageDiv = document.createElement('div');
+                errorMessageDiv.classList.add('error-message');
+                errorMessageDiv.textContent = message;
+                const form = document.querySelector('.login-form');
+                form.prepend(errorMessageDiv);
+            }
+
+            function clearError() {
+                const errorMessages = document.querySelectorAll('.error-message');
+                errorMessages.forEach(function(errorMessage) {
+                    errorMessage.remove();
+                });
+            }
+        });
+    </script>
 </head>
 
 <body>
@@ -61,11 +117,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <?php endif; ?>
 
             <div class="w3-section">
-                <input class="w3-input w3-border" type="email" id="email" name="email" placeholder="Email" required>
+                <input class="w3-input w3-border" type="email" id="email" name="email" placeholder="Email">
             </div>
 
             <div class="w3-section">
-                <input class="w3-input w3-border" type="password" id="password" name="password" placeholder="Password" required>
+                <input class="w3-input w3-border" type="password" id="password" name="password" placeholder="Password">
             </div>
 
             <button type="submit" class="btn-primary w3-block">Login</button>

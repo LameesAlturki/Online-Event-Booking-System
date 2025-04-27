@@ -136,22 +136,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <form method="POST" action="" enctype="multipart/form-data" id="editEventForm">
                 <div class="form-group">
                     <label for="name">Event Name:</label>
-                    <input type="text" id="name" name="name" value="<?= htmlspecialchars($event['name']) ?>" required>
+                    <input type="text" id="name" name="name" value="<?= htmlspecialchars($event['name']) ?>">
                 </div>
 
                 <div class="form-group">
                     <label for="date_time">Event Date & Time:</label>
-                    <input type="datetime-local" id="date_time" name="date_time" value="<?= date('Y-m-d\TH:i', strtotime($event['date_time'])) ?>" required>
+                    <input type="datetime-local" id="date_time" name="date_time" value="<?= date('Y-m-d\TH:i', strtotime($event['date_time'])) ?>">
                 </div>
 
                 <div class="form-group">
                     <label for="location">Location:</label>
-                    <input type="text" id="location" name="location" value="<?= htmlspecialchars($event['location']) ?>" required>
+                    <input type="text" id="location" name="location" value="<?= htmlspecialchars($event['location']) ?>">
                 </div>
 
                 <div class="form-group">
                     <label for="price">Ticket Price (SAR):</label>
-                    <input type="number" id="price" name="price" step="0.01" min="0" value="<?= $event['price'] ?>" required>
+                    <input type="number" id="price" name="price" step="0.01" min="0" value="<?= $event['price'] ?>">
                 </div>
 
                 <div class="form-group">
@@ -167,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 <div class="form-group">
                     <label for="max_tickets">Maximum Number of Tickets:</label>
-                    <input type="number" id="max_tickets" name="max_tickets" min="<?= $event['max_tickets'] - $event['remaining_tickets'] ?>" value="<?= $event['max_tickets'] ?>" required>
+                    <input type="number" id="max_tickets" name="max_tickets" min="<?= $event['max_tickets'] - $event['remaining_tickets'] ?>" value="<?= $event['max_tickets'] ?>">
                 </div>
 
                 <div class="form-group">
@@ -177,6 +177,76 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </form>
         </div>
     </div>
+    
+    <script>
+        document.getElementById('eventForm').addEventListener('submit', function(event) {
+            const name = document.getElementById('name').value.trim();
+            const dateTime = document.getElementById('date_time').value;
+            const location = document.getElementById('location').value.trim();
+            const price = document.getElementById('price').value;
+            const image = document.getElementById('image').files.length;
+            const maxTickets = document.getElementById('max_tickets').value;
+            const remainingTickets = document.getElementById('remaining_tickets').value;
+
+            let errors = [];
+
+            // Display an error message 
+            function showError(id, message) {
+                document.getElementById(id).textContent = message;
+            }
+
+            // Clear the error 
+            function clearError(id) {
+                document.getElementById(id).textContent = "";
+            }
+
+            // Clear all previous error messages
+            clearError("nameError");
+            clearError("dateTimeError");
+            clearError("locationError");
+            clearError("priceError");
+            clearError("imageError");
+            clearError("maxTicketsError");
+            clearError("remainingTickets")
+
+            // Validate each field and show error messages
+            if (name === "") {
+                showError("nameError", "Event Name is required.");
+            }
+            if (dateTime === "") {
+                showError("dateTimeError", "Event Date & Time is required.");
+            }
+            if (location === "") {
+                showError("locationError", "Location is required.");
+            }
+            if (price === "" || price < 0) {
+                showError("priceError", "Valid Ticket Price is required.");
+            }
+            if (image === 0) {
+                showError("imageError", "Event Image must be uploaded.");
+            }
+            if (maxTickets === "" || maxTickets < 1) {
+                showError("maxTicketsError", "Maximum Tickets must be at least 1.");
+            }
+            if (maxTickets < (maxTickets - remainingTickets)) {
+                showError("maxTicketsError", "maxTickets is less than already booked tickets")
+            }
+
+            // If there are any errors, prevent form submission
+            if (errors.length > 0) {
+                event.preventDefault();
+                alert(errors.join("\n"));
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const phpErrors = document.getElementById('phpError');
+            if (phpErrors) {
+                phpErrors.style.display = 'block';
+            }
+        });
+    </script>
+
 </body>
 
 </html>
